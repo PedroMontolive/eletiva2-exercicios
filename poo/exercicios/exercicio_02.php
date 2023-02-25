@@ -22,7 +22,7 @@ Class Account
 
     public function withdraw(float $value): void
     {
-        $this->balance -= $value;
+        $value > $this->balance ? $this->balance = 0 : $this->balance -= $value;
     }
 
     public function transfer(float $value, Account $account): void
