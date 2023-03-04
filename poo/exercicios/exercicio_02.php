@@ -1,6 +1,6 @@
 <?php
 
-Class Account
+abstract Class Account
 {
     public string $bank;
     public string $agency;
@@ -22,13 +22,23 @@ Class Account
 
     public function withdraw(float $value): void
     {
-        $value > $this->balance ? $this->balance = 0 : $this->balance -= $value;
+        if($value > $this->balance) {
+            echo json_encode(['status' => false ,'msg' => 'Saldo insuficiente']);
+            return;
+        }else {
+            $this->balance -= $value;
+        }
     }
 
     public function transfer(float $value, Account $account): void
     {
-        $this->withdraw($value);
-        $account->deposit($value);
+        if($value > $this->balance) {
+            echo json_encode(['status' => false ,'msg' => 'Saldo insuficiente']);
+            return;
+        }else {
+            $this->withdraw($value);
+            $account->deposit($value);
+        }
     }
 
     public function getBalance(): float
@@ -73,16 +83,86 @@ Class Account
 
     public function __toString(): string
     {
-        return "Bank: {$this->bank} Agency: {$this->agency} Account: {$this->account} Balance: {$this->balance}";
+        return "Bank: {$this->bank} | Agency: {$this->agency} | Account: {$this->account} | Balance: {$this->balance}";
     }
     
 }
 
-$account_001 = new Account('Banco do Brasil', '1234', '123456-7', 1000);
-$account_002 = new Account('Caixa Econômica', '4321', '765432-1', 500);
+final Class CurrentAccount extends Account
+{
+    public float $limit;
 
-$account_001->deposit(100);
-$account_001->withdraw(50);
-$account_001->transfer(100, $account_002);
+    public function __construct(string $bank, string $agency, string $account, float $balance, float $limit)
+    {
+        parent::__construct($bank, $agency, $account, $balance);
+        $this->limit = $limit;
+    }
 
-echo $account_001->__toString();
+    public function withdraw(float $value): void
+    {
+        if($value > $this->balance + $this->limit) {
+            echo json_encode(['status' => false ,'msg' => 'Saldo insuficiente']);
+            return;
+        }else {
+            $this->balance -= $value;
+        }
+    }
+
+    public function getLimit(): float
+    {
+        return $this->limit;
+    }
+
+    public function setLimit(float $limit): void
+    {
+        $this->limit = $limit;
+    }
+
+    public function __toString(): string
+    {
+        $total = $this->balance + $this->limit;
+        return "Bank: {$this->bank} | Agency: {$this->agency} | Account: {$this->account} | Balance: {$this->balance} | Limit: {$this->limit} | Total: {$total}";
+    }
+}
+
+Final Class SavingsAccount extends Account
+{
+    public float $rate;
+
+    public function __construct(string $bank, string $agency, string $account, float $balance, float $rate)
+    {
+        parent::__construct($bank, $agency, $account, $balance);
+        $this->rate = $rate;
+    }
+
+    public function getRate(): float
+    {
+        return $this->rate;
+    }
+
+    public function setRate(float $rate): void
+    {
+        $this->rate = $rate;
+    }
+
+    public function __toString(): string
+    {
+        return "Bank: {$this->bank} | Agency: {$this->agency} | Account: {$this->account} | Balance: {$this->balance} | Rate: {$this->rate}";
+    }
+}
+
+// $account_001 = new Account('Banco do Brasil', '1234', '123456-7', 1000);
+$account_002 = new CurrentAccount('Itaú', '4321', '765432-1', 1000, 500);
+$account_003 = new SavingsAccount('Bradesco', '5678', '876543-2', 1000, 0.5);
+
+
+// echo $account_001->__toString();
+echo "-----------------------------------------------------------------------------------------------------------------------";
+echo "</br>";
+echo $account_002->__toString();
+echo "</br>";
+echo "-----------------------------------------------------------------------------------------------------------------------";
+echo "</br>";
+echo $account_003->__toString();
+echo "</br>";
+echo "-----------------------------------------------------------------------------------------------------------------------";
