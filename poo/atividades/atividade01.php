@@ -1,5 +1,6 @@
 <?php 
-
+ini_set('display_errors', 0);
+error_reporting(E_ALL);
 class Ponto 
 {
     private int $x;
@@ -10,7 +11,6 @@ class Ponto
     {
         $this->x = $x;
         $this->y = $y;
-        $this->setContador();
     }
 
     public function setX(int $x) 
@@ -75,3 +75,19 @@ class Ponto
         return "($this->x, $this->y)";
     }
 }
+
+
+echo "<h1>Atividade 01</h1>";
+
+$ponto1 = new Ponto(1, 2);
+$ponto2 = new Ponto(3, 4);
+
+echo $ponto1->calcularDistancia($ponto2);
+echo "<hr/>";
+echo $ponto1->calcularDistanciaComCordenadas(8, 8);
+echo "<hr/>";
+echo $ponto1->calcularDistanciaEntreDoisPontosComCordenadas(4, 6, 8, 12);
+echo "<hr/>";
+echo $ponto1->__toString();
+echo "<hr/>";
+echo $ponto2->__toString();
