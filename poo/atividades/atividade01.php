@@ -1,16 +1,16 @@
 <?php 
-ini_set('display_errors', 0);
-error_reporting(E_ALL);
+
 class Ponto 
 {
     private int $x;
     private int $y;
-    private int $contador;
+    private static int $contador = 0;
 
     public function __construct(int $x, int $y) 
     {
         $this->x = $x;
         $this->y = $y;
+        self::$contador++;
     }
 
     public function setX(int $x) 
@@ -39,35 +39,24 @@ class Ponto
         $this->y += $y;
     }
 
-    public function setContador() 
+    public function distancia(Ponto $ponto) 
     {
-        $this->contador++;
+        return sqrt(pow($this->x - $ponto->getX(), 2) + pow($this->y - $ponto->getY(), 2));
     }
 
-    public function getContador() 
+    public function distanciaXY(int $x, int $y) 
     {
-        return $this->contador;
+        return sqrt(pow($this->x - $x, 2) + pow($this->y - $y, 2));
     }
 
-    public function calcularDistancia(Ponto $ponto) 
+    public static function distanciaXYXY(int $x1, int $y1, int $x2, int $y2) 
     {
-        $x = $this->x - $ponto->getX();
-        $y = $this->y - $ponto->getY();
-        return sqrt(pow($x, 2) + pow($y, 2));
+        return sqrt(pow($x1 - $x2, 2) + pow($y1 - $y2, 2));
     }
 
-    public function calcularDistanciaComCordenadas(int $x, int $y) 
+    public static function getContador() 
     {
-        $x = $this->x - $x;
-        $y = $this->y - $y;
-        return sqrt(pow($x, 2) + pow($y, 2));
-    }
-
-    public function calcularDistanciaEntreDoisPontosComCordenadas(int $x1, int $y1, int $x2, int $y2) 
-    {
-        $x = $x1 - $x2;
-        $y = $y1 - $y2;
-        return sqrt(pow($x, 2) + pow($y, 2));
+        return self::$contador;
     }
 
     public function __toString() : string
@@ -76,18 +65,14 @@ class Ponto
     }
 }
 
-
-echo "<h1>Atividade 01</h1>";
-
 $ponto1 = new Ponto(1, 2);
 $ponto2 = new Ponto(3, 4);
 
-echo $ponto1->calcularDistancia($ponto2);
+echo $ponto1->distancia($ponto2);
 echo "<hr/>";
-echo $ponto1->calcularDistanciaComCordenadas(8, 8);
+echo $ponto1->distanciaXY(3, 4);
 echo "<hr/>";
-echo $ponto1->calcularDistanciaEntreDoisPontosComCordenadas(4, 6, 8, 12);
+echo Ponto::distanciaXYXY(1, 2, 3, 4);
 echo "<hr/>";
-echo $ponto1->__toString();
-echo "<hr/>";
-echo $ponto2->__toString();
+echo Ponto::getContador();
+
